@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+        <div id="List">
+            <div id="ListItems">
+            </div>
+        </div>
+    </body>
+</html>
+
+<script type="text/javascript" src="./countries.js"></script>
+<script>
+    let index = 0;
+    const step = 20;
+    
+    const fetchData = start => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                let arr = countries.slice(start, start+step);
+                if (arr.length < 1)
+                    reject("no more countries")
+                index += step;
+                resolve(arr)
+            }, 500);      
+        })
+    }
+
+    const renderData = data => {
+        const listItems = document.querySelector('#ListItems');
+        data.forEach(({flag, name}) => {
+            const flagItem = document.createElement("div");
+            const flagImg = document.createElement("img");
+            const flagName = document.createElement("span");
+            
+            flagName.innerHTML = name;
+            flagImg.classList.add("flag");
+            flagImg.src = `https://www.countries-ofthe-world.com/${flag}`;
+            
+            flagItem.appendChild(flagName);
+            flagItem.appendChild(flagImg);
+            listItems.appendChild(flagItem);
+        })
+    }
+
+    (function () {
+        const list = document.querySelector('#List');
+        list.addEventListener("scroll", () => {
+            if (list.scrollTop + list.offsetHeight + 500 >= list.scrollHeight){
+                list.classList.add('mod-loading');
+                fetchData(index)
+                .then(data => {
+                    renderData(data);
+                    list.classList.remove('mod-loading');
+                })
+                .catch(error => {
+                    console.log(error);
+                    list.classList.remove('mod-loading');
+                })
+            }
+        })
+        fetchData(index)
+        .then(data => {
+            renderData(data);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    })()
+    
+</script>
+
+<style>
+    #List {
+        max-height: 400px;
+        max-width: 500px;
+        overflow: auto;
+        border: 1px solid rgb(80, 80, 80);
+    }
+
+    .mod-loading {
+        cursor: wait;
+    }
+
+    #ListItems div {
+        border-bottom: 1px solid #ccc;
+        border-top: 1px solid #ccc;
+        padding: 1em;
+    }
+
+     #ListItems img {
+        display: block;
+    }
+
+    #ListItems div:hover {
+        background-color: #eee;
+    }
+</style>
