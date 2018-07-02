@@ -118,5 +118,10 @@ test('test array permutation', () => {
     expect(frontEnd.findPermutations(array)).toEqual(output);
 });
 
+test('test trip itinerary', () => {
+    let input = [['YVR','SFO'],['YYZ','NYC'],['SFO','YYZ']];
+    let output = ['YVR', 'SFO', 'YYZ', 'NYC'];
+    expect(frontEnd.reconstructItinerary(input)).toEqual(output);
+});
 
     

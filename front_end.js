@@ -156,6 +156,115 @@ const findPermutations = (inputArr) => {
   return solution;
 };
 
+
+const reconstructItinerary = itinerary => {
+  
+  let itineraryMap = new Map();
+  let reverseItinerary = new Map();
+  let output = [];
+  let startingCity = '';
+
+  itinerary.forEach(pair => {
+    itineraryMap.set(pair[0], pair[1]);
+    reverseItinerary.set(pair[1], pair[0]);
+  })
+
+  // find starting city
+  for (let i = 0; i < itinerary.length; i++){
+    if (!reverseItinerary.has(itinerary[i][0])){
+      startingCity = itinerary[i][0];
+      break;
+    }
+  }
+
+  if (!startingCity)
+    throw new Error('no starting city found')
+
+  output.push(startingCity);
+  for (let i = 0; i < itineraryMap.size; i++){  
+    startingCity = itineraryMap.get(startingCity)
+    output.push(startingCity)
+  }
+
+  return output;
+
+  /*
+  o(n^2)
+  let output = [];
+  output.push(...itinerary[0]);
+  for (let i = 1; i < itinerary.length; i++){
+    let nextSource = output[output.length-1];
+    for (let j = 1; j < itinerary.length; j++){
+      if (itinerary[j][0] === nextSource){
+        output.push(itinerary[j][1])
+        break;
+      }
+    }
+  }
+  
+  return output;
+  */
+}
+
+const reconstructItinerary_tps = tickets => {
+  // place tickets into graphs
+  let graph = new Map();
+  tickets.forEach(pair => {
+    if (!graph.has(pair[0])){
+      graph.set(pair[0], [])
+    }
+    graph.get(pair[0]).push(pair[1])
+  })
+
+  // perform topological sort on the graph
+  const visit = (vertex) => {
+    while (graph.get(vertex)){
+      visit(graph.get(vertex).pop());
+    }     
+    stack.push(vertex);
+  }
+  
+  let stack = [];
+  
+  //graph.forEach(nodes, vertex, )
+  visit('JFK');
+  return stack;
+  
+}
+
+
+const fibonacci = idx => {
+  // 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, …  
+  
+  const cache = new Map();
+
+  const calc = (idx) => {
+    if (cache.has(idx))
+      return cache.get(idx);
+    
+    if (idx < 2)
+      return 1;
+    
+    cache.set(idx, fibonacci(idx-2) + fibonacci(idx-1));
+    
+    return cache.get(idx);
+
+    return fibonacci(idx-2) + fibonacci(idx-1);
+  }
+  
+  return calc(idx);
+
+  /*
+  let arr = [1, 1];
+
+  for (let i = 2; i < idx + 1; i++){
+    arr.push(arr[i-1] + arr[i-2])
+  }
+
+  return arr[idx];
+  */
+}
+
 module.exports = {
   anagram,
   array_dedup,
@@ -164,5 +273,8 @@ module.exports = {
   async_all_es6,
   contains,
   maxSubArray,
-  findPermutations
+  findPermutations,
+  reconstructItinerary,
+  reconstructItinerary_tps,
+  fibonacci,
 };
